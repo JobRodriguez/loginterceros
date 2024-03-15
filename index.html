@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <div id="g_id_onload" data-client_id="746657596691-2p04vui0p7grobii11u4c0iqeic4m6f1.apps.googleusercontent.com"
+    data-callback="handleCredentialResponse">
+  </div>
+
+  <!-- Botón de inicio de sesión -->
+  <div class="g_id_signin" data-type="standard"></div>
+
+  <!-- Botón de cierre de sesión -->
+  <div id="logoutButton" style="display: none;">
+    <button onclick="signOut()">Cerrar sesión</button>
+  </div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      const credential = response.credential;
+      console.log('Credential: ' + credential);
+
+      // Dividir el JWT en sus partes (header, payload y signature)
+      const parts = credential.split('.');
+      const payload = parts[1];
+
+      // Decodificar el payload desde Base64
+      const decodedPayload = decodeBase64Url(payload);
+
+      // Convertir el payload decodificado a un objeto JavaScript
+      const payloadObject = JSON.parse(decodedPayload);
+
+      // Imprimir los campos deseados en la consola
+      console.log('name:', payloadObject.name);
+      console.log('given_name:', payloadObject.given_name);
+      console.log('family_name:', payloadObject.family_name);
+      console.log('email:', payloadObject.email);
+
+      // Mostrar el botón de cerrar sesión y ocultar el de inicio de sesión
+      document.getElementById('logoutButton').style.display = 'block';
+      document.getElementsByClassName('g_id_signin')[0].style.display = 'none';
+    }
+
+    // Función para decodificar una cadena Base64 URL-safe
+    function decodeBase64Url(input) {
+      // Reemplazar los caracteres especiales y decodificar la cadena Base64
+      const replacedInput = input.replace(/-/g, '+').replace(/_/g, '/');
+      return atob(replacedInput);
+    }
+
+    function signOut() {
+      console.log('Sesion cerrada');
+      document.getElementById('logoutButton').style.display = 'none';
+      document.getElementsByClassName('g_id_signin')[0].style.display = 'block';
+    }
+  </script>
+</body>
+
+</html>
